@@ -4,6 +4,7 @@ const recipes = [
     name: "Spaghetti Carbonara",
     image: "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400",
     description: "Krämig italiensk pastarätt med ägg, bacon och parmesan.",
+    cookTime: "25 minuter",
     ingredients: [
         "400g spaghetti",
       "150g bacon eller pancetta",
@@ -26,6 +27,7 @@ const recipes = [
     name: "Tacos",
     image: "https://images.unsplash.com/photo-1552332386-f8dd00dc2f85?w=400",
     description: "Mexikanska tacos med köttfärs och färska tillbehör.",
+    cookTime: "30 minuter",
     ingredients: [
       "8 tacoskal",
       "500g köttfärs",
@@ -47,6 +49,7 @@ const recipes = [
     name: "Pannkakor",
     image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400",
     description: "Klassiska svenska pannkakor, perfekt till fika eller middag.",
+    cookTime: "45 minuter",
     ingredients: [
       "3 dl mjöl",
       "6 dl mjölk",
