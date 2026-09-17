@@ -1,6 +1,6 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
-function AddRecipeForm({ onRecipeAdded }) {
+function AddRecipeForm({ onRecipeAdded, onRecipeUpdated, existingRecipe, onCancel }) {
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
   const [cookTime, setCookTime] = useState("")
@@ -10,13 +10,23 @@ function AddRecipeForm({ onRecipeAdded }) {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
+  useEffect(() => {
+    if (existingRecipe) {
+      setName(existingRecipe.name)
+      setDescription(existingRecipe.description)
+      setCookTime(existingRecipe.cookTime)
+      setIngredients(existingRecipe.ingredients.join("\n"))
+      setSteps(existingRecipe.steps.join("\n"))
+    }
+  }, [existingRecipe])
+
   async function handleSubmit(e) {
     e.preventDefault()
     setError("")
     setLoading(true)
 
     try {
-      let imagePath = null
+      let imagePath = existingRecipe ? existingRecipe.imagePath : null
 
       if (file) {
         const formData = new FormData()
@@ -36,7 +46,7 @@ function AddRecipeForm({ onRecipeAdded }) {
         imagePath = uploadData.path
       }
 
-      const newRecipe = {
+      const recipeData = {
         name,
         description,
         cookTime,
@@ -45,18 +55,33 @@ function AddRecipeForm({ onRecipeAdded }) {
         imagePath
       }
 
-      const response = await fetch("http://localhost:5205/api/recipes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newRecipe)
-      })
+      if (existingRecipe) {
+        const response = await fetch(`http://localhost:5205/api/recipes/${existingRecipe.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(recipeData)
+        })
 
-      if (!response.ok) {
-        throw new Error("Kunde inte lägga till receptet")
+        if (!response.ok) {
+          throw new Error("Kunde inte uppdatera receptet")
+        }
+
+        const updatedRecipe = await response.json()
+        onRecipeUpdated(updatedRecipe)
+      } else {
+        const response = await fetch("http://localhost:5205/api/recipes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(recipeData)
+        })
+
+        if (!response.ok) {
+          throw new Error("Kunde inte lägga till receptet")
+        }
+
+        const savedRecipe = await response.json()
+        onRecipeAdded(savedRecipe)
       }
-
-      const savedRecipe = await response.json()
-      onRecipeAdded(savedRecipe)
 
       setName("")
       setDescription("")
@@ -73,7 +98,7 @@ function AddRecipeForm({ onRecipeAdded }) {
 
   return (
     <form onSubmit={handleSubmit} className="add-recipe-form">
-      <h2>Lägg till nytt recept</h2>
+      <h2>{existingRecipe ? "Redigera recept" : "Lägg till nytt recept"}</h2>
 
       {error && <p className="error-message">{error}</p>}
 
@@ -121,8 +146,14 @@ function AddRecipeForm({ onRecipeAdded }) {
       />
 
       <button type="submit" disabled={loading}>
-        {loading ? "Lägger till..." : "Lägg till recept"}
+        {loading ? "Sparar..." : existingRecipe ? "Spara ändringar" : "Lägg till recept"}
       </button>
+
+      {existingRecipe && (
+        <button type="button" onClick={onCancel}>
+          Avbryt
+        </button>
+      )}
     </form>
   )
 }
