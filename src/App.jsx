@@ -1,10 +1,16 @@
-import {useState} from "react"
+import {useState,useEffect} from "react"
 import RecipeCard from "./components/RecipeCard"
 import RecipeDetails from "./components/RecipeDetails"
-import recipes from "./data/recipes.js"
 
 function App() {
   const [selectedRecipe, setSelectedRecipe] = useState(null)
+  const [recipes, setRecipes] =useState([])
+
+  useEffect(() => {
+    fetch("http://localhost:5205/api/recipes")
+      .then((response) => response.json())
+      .then(data => setRecipes(data))
+  }, [])
 
   return (
     <div className="app">
