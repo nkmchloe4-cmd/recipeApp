@@ -98,7 +98,12 @@ function AddRecipeForm({ onRecipeAdded, onRecipeUpdated, existingRecipe, onCance
 
   return (
     <form onSubmit={handleSubmit} className="add-recipe-form">
-      <h2>{existingRecipe ? "Redigera recept" : "Lägg till nytt recept"}</h2>
+      <div className="details-header">
+        <button type="button" onClick={onCancel} className="back-button">
+          ← Tillbaka
+        </button>
+        <h2>{existingRecipe ? "Redigera recept" : "Lägg till nytt recept"}</h2>
+      </div>
 
       {error && <p className="error-message">{error}</p>}
 
@@ -148,12 +153,6 @@ function AddRecipeForm({ onRecipeAdded, onRecipeUpdated, existingRecipe, onCance
       <button type="submit" disabled={loading}>
         {loading ? "Sparar..." : existingRecipe ? "Spara ändringar" : "Lägg till recept"}
       </button>
-
-      {existingRecipe && (
-        <button type="button" onClick={onCancel}>
-          Avbryt
-        </button>
-      )}
     </form>
   )
 }
