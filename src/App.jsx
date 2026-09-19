@@ -9,11 +9,16 @@ function App() {
   const [recipes, setRecipes] = useState([]);
   const [editingRecipe, setEditingRecipe] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [loadError, setLoadError] = useState(null);
 
   useEffect(() => {
     fetch("http://localhost:5205/api/recipes")
-      .then((response) => response.json())
-      .then((data) => setRecipes(data));
+      .then((response) => {
+        if (!response.ok) throw new Error("Kunde inte hämta recept från servern");
+        return response.json();
+      })
+      .then((data) => setRecipes(data))
+      .catch((err) => setLoadError(err.message));
   }, []);
 
   function handleRecipeAdded(newRecipe) {
@@ -62,6 +67,8 @@ function App() {
           </button>
         )}
       </div>
+
+      {loadError && <p className="error-message">{loadError}</p>}
 
       {showingForm && (
         <AddRecipeForm
