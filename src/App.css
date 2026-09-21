@@ -299,3 +299,19 @@ h1 {
   color: #999;
   font-size: 0.8rem;
 }
+
+.details-actions button {
+  padding: 0.6rem 1.4rem;
+  background-color: #d35400;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.details-actions button:hover {
+  background-color: #b8480a;
+}
